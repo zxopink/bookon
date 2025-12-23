@@ -1,0 +1,30 @@
+import json
+import os
+from typing import Dict, Any, Optional
+
+# Path to the mock data JSON file
+MOCK_DATA_PATH = os.path.join(os.path.dirname(__file__), "book_monthly_mock_info.json")
+
+# Cache for the parsed mock data
+_cached_mock_data: Optional[Dict[str, Any]] = None
+
+
+def get_mock_data() -> Dict[str, Any]:
+    """
+    Load and return mock data from JSON file.
+    Uses caching to avoid reading the file multiple times.
+    
+    Returns:
+        Dict containing the parsed JSON data
+    """
+    global _cached_mock_data
+    
+    if _cached_mock_data is None:
+        with open(MOCK_DATA_PATH, 'r', encoding='utf-8') as f:
+            _cached_mock_data = json.load(f)
+    
+    if _cached_mock_data is None:
+        raise ValueError("Mock data could not be loaded.")
+
+    return _cached_mock_data
+

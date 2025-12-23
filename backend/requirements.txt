@@ -1,0 +1,5 @@
+fastapi
+uvicorn[standard]
+psycopg[binary] #for PostgreSQL database
+python-dotenv
+requests

@@ -1,0 +1,30 @@
+.results-grid {
+    display: grid;
+    gap: 1.5rem;
+    margin-top: 2rem;
+    width: 100%;
+}
+
+.results-placeholder {
+    text-align: center;
+    color: #747474;
+    font-size: 1.1rem;
+    padding: 3rem;
+}
+
+.scroll-trigger {
+    height: 20px;
+    margin-top: 2rem;
+}
+
+.loading-more-container {
+    display: flex;
+    justify-content: center;
+    padding: 2rem 0;
+}
+
+@media (max-width: 768px) {
+    .results-grid {
+        gap: 1rem;
+    }
+}

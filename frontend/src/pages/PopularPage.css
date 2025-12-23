@@ -1,0 +1,28 @@
+.popular-page {
+    width: 100%;
+}
+
+.popular-page h1 {
+    font-size: 2rem;
+    margin: 0 0 2rem 0;
+    color: #333;
+}
+
+.books-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+    padding: 0;
+}
+
+.loading-message,
+.error-message {
+    font-size: 1.1rem;
+    color: #666;
+    padding: 2rem;
+    text-align: center;
+}
+
+.error-message {
+    color: #d32f2f;
+}
