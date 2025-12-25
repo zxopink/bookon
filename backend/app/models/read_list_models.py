@@ -10,12 +10,10 @@ class ReadStatus(int, Enum):
     DONE = 2
     
     def to_string(self) -> str:
-        """Convert enum to readable string"""
         return self.name.lower()
     
     @classmethod
     def from_string(cls, value: str) -> "ReadStatus":
-        """Convert string to enum"""
         return cls[value.upper()]
 
 

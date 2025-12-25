@@ -2,7 +2,10 @@ import json
 import os
 from typing import Dict, Any, Optional
 
-# Path to the mock data JSON file
+#This was primarily made to copy old data from a list to provide
+#In case popular books API failed to respond
+#It's an offline backup by me (yoav) :)
+
 MOCK_DATA_PATH = os.path.join(os.path.dirname(__file__), "book_monthly_mock_info.json")
 
 # Cache for the parsed mock data

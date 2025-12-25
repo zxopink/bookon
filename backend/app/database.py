@@ -10,7 +10,6 @@ DATABASE_URL = os.getenv("DATABASE_URL", "")
 if not DATABASE_URL:
     raise ValueError("DATABASE_URL environment variable is not set.")
 
-# Convert SQLAlchemy-style URL to psycopg format if needed
 if DATABASE_URL.startswith("postgresql+psycopg://"):
     DATABASE_URL = DATABASE_URL.replace("postgresql+psycopg://", "postgresql://")
 
@@ -29,7 +28,6 @@ def get_connection():
 
 
 def execute_query(query: SQL, params: Optional[Tuple] = None) -> List[Dict[str, Any]]:
-    #Execute a SELECT query and return results as list of dictionaries.
     with get_connection() as conn:
         with conn.cursor(row_factory=dict_row) as cur:
             cur.execute(query, params or ())  
@@ -44,7 +42,6 @@ def execute_one(query: SQL, params: Optional[Tuple] = None) -> Optional[Dict[str
 
 
 def execute_command(query: SQL, params: Optional[Tuple] = None) -> int:
-    #Execute an INSERT, UPDATE, or DELETE command.
     with get_connection() as conn:
         with conn.cursor() as cur:
             cur.execute(query, params or ())  
@@ -52,7 +49,6 @@ def execute_command(query: SQL, params: Optional[Tuple] = None) -> int:
 
 
 def execute_many(query: SQL, params_list: List[Tuple]) -> int:
-    #Execute the same command with multiple parameter sets.
     with get_connection() as conn:
         with conn.cursor() as cur:
             cur.executemany(query, params_list)  
@@ -60,7 +56,6 @@ def execute_many(query: SQL, params_list: List[Tuple]) -> int:
 
 
 def execute_transaction(queries: List[Tuple[SQL, Optional[Tuple]]]) -> bool:    
-    #Execute multiple SQL queries in a single transaction.
     with get_connection() as conn:
         with conn.cursor() as cur:
             for query, params in queries:
@@ -68,19 +63,8 @@ def execute_transaction(queries: List[Tuple[SQL, Optional[Tuple]]]) -> bool:
     return True
 
 
+#Execute a multi-statement SQL script.
 def execute_script(sql_script: SQL):
-    """
-    Execute a multi-statement SQL script.
-    
-    Args:
-        sql_script: String containing multiple SQL statements
-        
-    Example:
-        execute_script('''
-            CREATE TABLE users (id SERIAL PRIMARY KEY, name VARCHAR(100));
-            CREATE INDEX idx_users_name ON users(name);
-        ''')
-    """
     with get_connection() as conn:
         with conn.cursor() as cur:
             cur.execute(sql_script)  

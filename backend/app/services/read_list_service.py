@@ -37,7 +37,6 @@ def init_read_list_table():
 def get_read_list() -> List[Dict[str, Any]]:
     query = SQL("SELECT * FROM read_list ORDER BY updated_at DESC")
     results = execute_query(query)
-    # Convert status integers to strings
     for result in results:
         result['status'] = _int_to_status_string(result['status'])
     return results
@@ -72,7 +71,6 @@ def add_to_read_list(book_external_id: str, title: str, description: Optional[st
     result = execute_one(query, (book_external_id, title, description, author, cover_i, status))
     if result is None:
         raise Exception("Failed to add book to read list")
-    # Convert status to string for API response
     result['status'] = _int_to_status_string(result['status'])
     return result
 

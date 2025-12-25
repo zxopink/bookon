@@ -120,10 +120,10 @@ def run_tests():
     print(f"Results: {passed} passed, {failed} failed")
 
     if failed == 0:
-        print("🎉 All tests passed!")
+        print("All tests passed!")
         return 0
     else:
-        print("❌ Some tests failed!")
+        print("Some tests failed!")
         return 1
 
 

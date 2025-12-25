@@ -13,15 +13,15 @@ from services.read_list_service import init_read_list_table
 #on app startup and shutdown
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup: Initialize database tables
+    #Startup: Initialize database tables
     init_read_list_table()
     yield
-    # Shutdown: cleanup if needed
+    #Shutdown: cleanup if needed
 
 
 app = FastAPI(title="BookOn API", version="1.0.0", lifespan=lifespan)
 
-# CORS configuration
+#CORS configuration
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -30,12 +30,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include routers
+#Include routers
 app.include_router(book_router)
 app.include_router(read_list_router)
 
 
-# Serve frontend
+#Serve frontend files
 app.mount(
     "/",
     StaticFiles(directory="static", html=True),

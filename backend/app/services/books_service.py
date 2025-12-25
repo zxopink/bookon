@@ -83,7 +83,6 @@ def get_book_by_id(book_id: str) -> Optional[Dict[str, Any]]:
         response.raise_for_status()
         data = response.json()
         
-        #Get description it can be a string or a dict with 'value' key
         description = None
         if "description" in data:
             desc = data["description"]
@@ -102,11 +101,9 @@ def get_book_by_id(book_id: str) -> Optional[Dict[str, Any]]:
         edition_info = None
         
         with ThreadPoolExecutor(max_workers=2) as executor:
-            #Submit both tasks concurrently
             authors_future = executor.submit(get_authors_from_keys, author_keys) if author_keys else None
             edition_future = executor.submit(get_edition_info, book_id)
             
-            #Get results
             if authors_future:
                 author_names = authors_future.result()
             edition_info = edition_future.result()
@@ -161,7 +158,6 @@ def get_popular_books(limit: int = 12, page: int = 1, duration: str = "monthly")
         data = response.json()
         
     except Exception as e:
-        #Failed to fetch, result to mocking books taken from real data by me (yoav) :)
         #Modern problems require modern solutions
         print(f"Error fetching popular books: {str(e)}. Using mock data.")
         data = get_mock_data()
