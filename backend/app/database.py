@@ -6,7 +6,7 @@ from typing import Optional, Any, List, Dict, Tuple
 from contextlib import contextmanager
 
 # Get database connection string from environment
-DATABASE_URL = os.getenv("DATABASE_URL", "")
+DATABASE_URL = os.getenv("DATABASE_URL", f"postgresql://{os.getenv('POSTGRES_USER','postgres')}:{os.getenv('POSTGRES_PASSWORD','postgres')}@db:5432/{os.getenv('POSTGRES_DB','bookon')}")
 if not DATABASE_URL:
     raise ValueError("DATABASE_URL environment variable is not set.")
 
