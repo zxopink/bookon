@@ -19,7 +19,7 @@ export interface BookCardProps {
   description?: string;
   authors?: string[];
   cover_i?: number;
-  status: ReadingStatusType;
+  status?: ReadingStatusType; //Different than undefined only if in reading list
 }
 
 export default function BookCard({ external_id, title, description, authors, cover_i, status }: BookCardProps) {
@@ -30,8 +30,13 @@ export default function BookCard({ external_id, title, description, authors, cov
   const cardRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   
-  const { addBook, isBookInList, removeBook, updateBookStatus: updateBook } = useReadingList();
+  const { addBook, isBookInList, removeBook, updateBookStatus, getBookInList } = useReadingList();
   const isInList = isBookInList(external_id);
+  if(isInList && !status) {
+      const bookInList = getBookInList(external_id);
+      status = bookInList!.status;
+    }
+
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return;
@@ -96,7 +101,7 @@ export default function BookCard({ external_id, title, description, authors, cov
 
   const handleStatusUpdate = async (newStatus: ReadingStatusType) => {
     try {
-      const success = await updateBook(external_id, newStatus);
+      const success = await updateBookStatus(external_id, newStatus);
       if (success) {
         const statusText = newStatus === 'PLANNED' ? 'Planned' : newStatus === 'READING' ? 'Reading' : 'Done';
         toast.success(`Status updated to ${statusText}`);
