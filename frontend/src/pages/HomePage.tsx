@@ -22,6 +22,10 @@ export default function HomePage() {
           <p>Create and organize your personal reading list</p>
         </div>
       </section>
+
+      <footer className="footer">
+        <p>© 2025 Yoav Haik</p>
+      </footer>
     </div>
   );
 }
