@@ -30,7 +30,7 @@ export default function BookCard({ external_id, title, description, authors, cov
   const cardRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   
-  const { addBook, isBookInList, removeBook, updateBookStatus: updateBook, getBookInList } = useReadingList();
+  const { addBook, isBookInList, removeBook, updateBookStatus: updateBook } = useReadingList();
   const isInList = isBookInList(external_id);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {

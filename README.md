@@ -5,13 +5,11 @@ A web application built with FastAPI backend and PostgreSQL database.
 ## Prerequisites
 
 - Docker and Docker Compose installed
-- User added to docker group (run `sudo usermod -aG docker $USER` and log out/in)
+- User added to docker group (`sudo usermod -aG docker $USER`)
 
-## Getting Started
+## Environment Setup
 
-### 1. Environment Setup
-
-Create a `.env` file in the project root with the following variables:
+Create a `.env` file in the project root:
 
 ```env
 POSTGRES_DB=bookon
@@ -20,76 +18,66 @@ POSTGRES_PASSWORD=your_password_here
 DATABASE_URL=postgresql://postgres:your_password_here@db:5432/bookon
 ```
 
-### 2. Start the Application
+## Getting Started
 
-For first time or after code changes:
+### Start the Application
 
 ```bash
+# First time or after code changes
 docker-compose up --build
-```
 
-For subsequent runs:
-
-```bash
+# Subsequent runs
 docker-compose up
 ```
 
-### 3. Access the Application
-
-- **API**: http://localhost:8000
-- **API Documentation**: http://localhost:8000/docs
-- **PostgreSQL**: localhost:5432
-
-### 4. Stop the Application
-
-Press `Ctrl+C` in the terminal, then run:
+### Stop the Application
 
 ```bash
 docker-compose down
 ```
 
-To also remove volumes (database data):
+### Access the Application
 
-```bash
-docker-compose down -v
-```
+- **API**: http://localhost:8000
+- **API Documentation**: http://localhost:8000/docs
+
+## API Endpoints
+
+### Books API
+
+#### Search Books
+- **GET** `/api/search/books?q=search_term&limit=20&page=1`
+
+#### Get Popular Books
+- **GET** `/api/popular/books?limit=12&page=1&duration=monthly`
+
+#### Get Book Details
+- **GET** `/api/books/{external_book_id}`
+
+### Reading List API
+
+#### Get Reading List
+- **GET** `/api/reading-list/`
+
+#### Get Reading List Entry
+- **GET** `/api/reading-list/{id}`
+
+#### Add Book to Reading List
+- **POST** `/api/reading-list/`
+- **Body**: `{"external_id": "OL123456M", "title": "Book Title", "author": "Author", "description": "Optional", "cover_i": 12345}`
+
+#### Update Reading Status
+- **PUT** `/api/reading-list/{id}`
+- **Body**: `{"status": "READING|PLANNED|DONE"}`
+
+#### Remove from Reading List
+- **DELETE** `/api/reading-list/{id}`
 
 ## Testing
 
-The backend includes automated tests for the API endpoints.
+Run tests with:
 
-### Running Tests
-
-1. Ensure PostgreSQL is running (either via Docker or locally)
-2. Navigate to the backend directory:
-   ```bash
-   cd backend
-   ```
-3. Run the test script:
-   ```bash
-   ./run_tests.sh
-   ```
-
-### Test Coverage
-
-The tests verify:
-- Adding books to the reading list
-- Prevention of duplicate book entries
-- Reading status updates (PLANNED → READING → DONE)
-
-## Troubleshooting
-
-### Permission Denied Error
-
-If you get a Docker socket permission error:
-
-1. Apply group changes in current terminal:
-   ```bash
-   newgrp docker
-   ```
-
-2. Or log out and log back in to apply the docker group membership permanently.
-
-### Database Connection Issues
-
-Ensure the `DATABASE_URL` in `.env` matches your PostgreSQL credentials and uses `db` as the hostname (the Docker service name).
+```bash
+cd backend
+./run_tests.sh
+```

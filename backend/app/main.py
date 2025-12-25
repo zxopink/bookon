@@ -3,6 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import os
 
+from fastapi.staticfiles import StaticFiles
+
 from routes.book_routes import router as book_router
 from routes.read_list_routes import router as read_list_router
 from services.read_list_service import init_read_list_table
@@ -33,9 +35,12 @@ app.include_router(book_router)
 app.include_router(read_list_router)
 
 
-@app.get("/")
-async def root():
-    return {"message": "Welcome to BookOn API"}
+# Serve frontend
+app.mount(
+    "/",
+    StaticFiles(directory="static", html=True),
+    name="static"
+)
 
 
 @app.get("/health")

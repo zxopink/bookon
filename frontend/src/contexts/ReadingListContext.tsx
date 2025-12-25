@@ -106,7 +106,7 @@ export function ReadingListProvider({ children }: ReadingListProviderProps) {
 
 
       // Add book to local state
-      setBooks(prevBooks => [...prevBooks, newBook]);
+      setBooks(prevBooks => [newBook, ...prevBooks]);
       return true;
     } catch (error) {
       console.error('Error adding to reading list:', error);
