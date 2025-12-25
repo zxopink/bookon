@@ -177,7 +177,7 @@ export default function BookCard({ external_id, title, description, authors, cov
         <h3 className="book-card-title">{title}</h3>
         {authors && authors.length > 0 && (
           <p className="book-card-authors">
-            by {authors.join(', ')}
+            by {authors.slice(0, 3).join(', ')}
           </p>
         )}
       </div>
