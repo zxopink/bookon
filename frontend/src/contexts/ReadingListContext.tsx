@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
-import type { BookCardProps } from '../components/BookCard';
+import type { BookCardProps, ReadingStatusType } from '../components/BookCard';
 
 interface ReadListEntry {
   id: number;
@@ -8,18 +8,24 @@ interface ReadListEntry {
   author: string;
   description: string | null;
   cover_i: number | null;
-  status: number;
+  status: ReadingStatusType;
   created_at: string;
   updated_at: string;
 }
 
+export interface ReadBookCardProps extends BookCardProps {
+  read_list_id: number;
+}
+
 interface ReadingListContextType {
-  books: BookCardProps[];
+  books: ReadBookCardProps[];
   isLoading: boolean;
   error: string | null;
   addBook: (book: BookCardProps) => Promise<boolean>;
   removeBook: (external_id: string) => Promise<boolean>;
+  updateBookStatus: (external_id: string, status: ReadingStatusType) => Promise<boolean>;
   isBookInList: (external_id: string) => boolean;
+  getBookInList: (external_id: string) => ReadBookCardProps | undefined;
   refreshList: () => Promise<void>;
 }
 
@@ -30,7 +36,7 @@ interface ReadingListProviderProps {
 }
 
 export function ReadingListProvider({ children }: ReadingListProviderProps) {
-  const [books, setBooks] = useState<BookCardProps[]>([]);
+  const [books, setBooks] = useState<ReadBookCardProps[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -44,13 +50,14 @@ export function ReadingListProvider({ children }: ReadingListProviderProps) {
       }
       
       const data: ReadListEntry[] = await response.json();
-      
-      const bookCards: BookCardProps[] = data.map(entry => ({
+      const bookCards: ReadBookCardProps[] = data.map(entry => ({
+        read_list_id: entry.id,
         external_id: entry.book_external_id,
         title: entry.title,
         description: entry.description || '',
         authors: [entry.author],
-        cover_i: entry.cover_i ? entry.cover_i.toString() : undefined
+        cover_i: entry.cover_i ? entry.cover_i : undefined,
+        status: entry.status
       }));
       
       setBooks(bookCards);
@@ -78,16 +85,28 @@ export function ReadingListProvider({ children }: ReadingListProviderProps) {
           title: book.title,
           author: book.authors && book.authors.length > 0 ? book.authors.join('; ') : 'Unknown Author',
           description: book.description || null,
-          cover_i: book.cover_i ? parseInt(book.cover_i) : null
+          cover_i: book.cover_i,
+          status: book.status  // Default status: Planned
         }),
       });
 
       if (!response.ok) {
         throw new Error('Failed to add to reading list');
       }
+      const data: ReadListEntry = await response.json();
+      const newBook: ReadBookCardProps = {
+        read_list_id: data.id,
+        external_id: data.book_external_id,
+        title: data.title,
+        description: data.description || '',
+        authors: [data.author],
+        cover_i: data.cover_i ? data.cover_i : undefined,
+        status: data.status
+      };
+
 
       // Add book to local state
-      setBooks(prevBooks => [...prevBooks, book]);
+      setBooks(prevBooks => [...prevBooks, newBook]);
       return true;
     } catch (error) {
       console.error('Error adding to reading list:', error);
@@ -98,7 +117,12 @@ export function ReadingListProvider({ children }: ReadingListProviderProps) {
 
   const removeBook = async (external_id: string): Promise<boolean> => {
     try {
-      const response = await fetch(`http://localhost:8000/api/reading-list/${external_id}`, {
+      const bookToRemove = books.find(book => book.external_id === external_id);
+      if (!bookToRemove)
+        return false;
+
+      const read_list_id = bookToRemove.read_list_id;
+      const response = await fetch(`http://localhost:8000/api/reading-list/${read_list_id}`, {
         method: 'DELETE',
       });
 
@@ -107,7 +131,7 @@ export function ReadingListProvider({ children }: ReadingListProviderProps) {
       }
 
       // Remove book from local state
-      setBooks(prevBooks => prevBooks.filter(book => book.external_id !== external_id));
+      setBooks(prevBooks => prevBooks.filter(book => book.read_list_id !== read_list_id));
       return true;
     } catch (error) {
       console.error('Error removing from reading list:', error);
@@ -120,6 +144,47 @@ export function ReadingListProvider({ children }: ReadingListProviderProps) {
     return books.some(book => book.external_id === external_id);
   };
 
+  const getBookInList = (external_id: string): ReadBookCardProps | undefined => {
+    return books.find(book => book.external_id === external_id);
+  };
+
+  const updateBookStatus = async (external_id: string, status: ReadingStatusType): Promise<boolean> => {
+    try {
+      const bookToUpdate = books.find(book => book.external_id === external_id);
+      if (!bookToUpdate)
+        return false;
+
+      const read_list_id = bookToUpdate.read_list_id;
+      const response = await fetch(`http://localhost:8000/api/reading-list/${read_list_id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          status: status
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update book status');
+      }
+
+      const updatedEntry = await response.json();
+      
+      // Update book in local state
+      setBooks(prevBooks => prevBooks.map(book => 
+        book.external_id === external_id 
+          ? { ...book, status: updatedEntry.status }
+          : book
+      ));
+      return true;
+    } catch (error) {
+      console.error('Error updating book status:', error);
+      setError(error instanceof Error ? error.message : 'Failed to update book status');
+      return false;
+    }
+  };
+
   const refreshList = async () => {
     await fetchReadingList();
   };
@@ -130,7 +195,9 @@ export function ReadingListProvider({ children }: ReadingListProviderProps) {
     error,
     addBook,
     removeBook,
+    updateBookStatus,
     isBookInList,
+    getBookInList,
     refreshList
   };
 

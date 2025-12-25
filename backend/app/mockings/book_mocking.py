@@ -10,13 +10,6 @@ _cached_mock_data: Optional[Dict[str, Any]] = None
 
 
 def get_mock_data() -> Dict[str, Any]:
-    """
-    Load and return mock data from JSON file.
-    Uses caching to avoid reading the file multiple times.
-    
-    Returns:
-        Dict containing the parsed JSON data
-    """
     global _cached_mock_data
     
     if _cached_mock_data is None:

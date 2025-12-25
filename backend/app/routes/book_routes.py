@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, HTTPException
 from typing import List
-from models.book_models import Book, SearchBooksResponse
-from services.books_service import search_books, get_popular_books
+from models.book_models import BookDetail, SearchBooksResponse, BookBase
+from services.books_service import search_books, get_popular_books, get_book_by_id
 
 router = APIRouter(prefix="/api", tags=["books"])
 
@@ -25,4 +25,13 @@ async def get_popular_books_route(
 ):
     result = get_popular_books(limit=limit, page=page, duration=duration)
     return result
+
+
+
+@router.get("/books/{book_id}", response_model=BookDetail)
+async def get_book_route(book_id: str):
+    book = get_book_by_id(book_id)
+    if not book:
+        raise HTTPException(status_code=404, detail="Book not found")
+    return book
 

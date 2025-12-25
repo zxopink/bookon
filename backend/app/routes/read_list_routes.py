@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, status
 from typing import List, Optional
-from models import ReadList, ReadListCreate, ReadListUpdate, ReadStatus
+from models.read_list_models import ReadList, ReadListCreate, ReadListUpdate, ReadStatus
 from services import read_list_service
 
 
@@ -47,7 +47,7 @@ async def add_to_reading_list(book: ReadListCreate):
             description=book.description,
             author=book.author,
             cover_i=book.cover_i,
-            status=ReadStatus.PLANNED
+            status=0  # PLANNED
         )
         return entry
     except Exception as e:
@@ -60,10 +60,9 @@ async def add_to_reading_list(book: ReadListCreate):
 @router.put("/{id}", response_model=ReadList)
 async def update_reading_list_entry(id: int, update: ReadListUpdate):
     try:
-        status_value = ReadStatus.from_string(update.status).value
         entry = read_list_service.update_read_list_entry_by_id(
             entry_id=id,
-            status=status_value
+            status=update.status
         )
         if not entry:
             raise HTTPException(

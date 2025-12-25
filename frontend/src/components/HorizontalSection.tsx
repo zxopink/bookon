@@ -1,16 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
-import BookCard from './BookCard';
+import BookCard, { type BookCardProps } from './BookCard';
 import './HorizontalSection.css';
 import Spinner from './Spinner';
-
-interface Book {
-  external_id: string;
-  title: string;
-  authors: string[];
-  description?: string;
-  first_publish_year?: number;
-  cover_i?: string;
-}
 
 interface HorizontalSectionProps {
   title: string;
@@ -21,7 +12,7 @@ interface HorizontalSectionProps {
 }
 
 export default function HorizontalSection({ title, url, width = 280, height, limit = 12 }: HorizontalSectionProps) {
-  const [books, setBooks] = useState<Book[]>([]);
+  const [books, setBooks] = useState<BookCardProps[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -50,7 +41,7 @@ export default function HorizontalSection({ title, url, width = 280, height, lim
       }
       const data = await response.json();
       // Handle both { books: [] } and direct array responses
-      const booksList = data.books || data;
+      const booksList: BookCardProps[] = data.books || data;
       
       if (booksList.length < limit) {
         setHasMore(false);
@@ -119,20 +110,14 @@ export default function HorizontalSection({ title, url, width = 280, height, lim
             <div 
               key={book.external_id} 
               className="book-item"
-              style={{ 
+              style={{
                 flex: `0 0 ${width}px`, 
                 minWidth: `${width}px`,
                 maxWidth: `${width}px`,
                 height: height ? `${height}px` : 'auto'
               }}
             >
-              <BookCard
-                external_id={book.external_id}
-                title={book.title}
-                authors={book.authors}
-                description={book.description}
-                cover_i={book.cover_i?.toString()}
-              />
+              <BookCard {...book} />
             </div>
           ))}
           {loadingMore && (

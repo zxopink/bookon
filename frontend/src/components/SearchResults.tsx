@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useRef } from 'react';
 import BookCard from './BookCard';
 import './SearchResults.css';
@@ -82,26 +82,24 @@ export default function SearchResults({
           ...(cardHeight !== 'auto' && { gridAutoRows: cardHeight })
         }}
       >
-        {results.map((book, index) => (
-          <motion.div
-            key={`${book.external_id}-${index}`}
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{
-              duration: 0.5,
-              delay: index * 0.1,
-              ease: [0.4, 0, 0.2, 1]
-            }}
-          >
-            <BookCard
-              external_id={book.external_id}
-              title={book.title}
-              authors={book.authors}
-              description={book.description}
-              cover_i={book.cover_i}
-            />
-          </motion.div>
-        ))}
+        <AnimatePresence mode="popLayout">
+          {results.map((book, index) => (
+            <motion.div
+              key={book.external_id}
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, scale: 1.8, transition: { duration: 0.3 } }}
+              transition={{
+                duration: 0.5,
+                delay: index * 0.1,
+                ease: [0.4, 0, 0.2, 1]
+              }}
+              layout
+            >
+              <BookCard {...book} />
+            </motion.div>
+          ))}
+        </AnimatePresence>
       </div>
       
       {/* Intersection observer target */}

@@ -1,4 +1,4 @@
-# BookOn
+# BookOn📚
 
 A web application built with FastAPI backend and PostgreSQL database.
 
@@ -53,6 +53,29 @@ To also remove volumes (database data):
 ```bash
 docker-compose down -v
 ```
+
+## Testing
+
+The backend includes automated tests for the API endpoints.
+
+### Running Tests
+
+1. Ensure PostgreSQL is running (either via Docker or locally)
+2. Navigate to the backend directory:
+   ```bash
+   cd backend
+   ```
+3. Run the test script:
+   ```bash
+   ./run_tests.sh
+   ```
+
+### Test Coverage
+
+The tests verify:
+- Adding books to the reading list
+- Prevention of duplicate book entries
+- Reading status updates (PLANNED → READING → DONE)
 
 ## Troubleshooting
 

@@ -19,9 +19,19 @@ class ReadStatus(int, Enum):
         return cls[value.upper()]
 
 
-class ReadListBase(BaseModel):
-    book_external_id: str = Field(..., min_length=1, max_length=100)
-    status: ReadStatus
+class ReadList(BaseModel):
+    id: int
+    external_id: str = Field(..., min_length=1, max_length=100, alias="book_external_id")
+    title: str = Field(..., min_length=1)
+    author: str = Field(..., min_length=1)
+    description: Optional[str] = None
+    cover_i: Optional[int] = None
+    status: str = Field(..., pattern="^(PLANNED|READING|DONE)$")
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        populate_by_name = True
 
 
 class ReadListCreate(BaseModel):
@@ -34,12 +44,3 @@ class ReadListCreate(BaseModel):
 
 class ReadListUpdate(BaseModel):
     status: str = Field(..., pattern="^(PLANNED|READING|DONE)$")
-
-
-class ReadList(ReadListBase):
-    id: int
-    created_at: datetime
-    updated_at: datetime
-
-    class Config:
-        from_attributes = True

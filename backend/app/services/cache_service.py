@@ -32,13 +32,11 @@ def cached_with_ttl(ttl_seconds: int = 3600):
 
 
 def clear_cache():
-    """Clear all cached entries."""
     global _cache
     _cache.clear()
 
 
 def clear_cache_for_function(func_name: str):
-    """Clear cache entries for a specific function."""
     global _cache
     keys_to_delete = [key for key in _cache.keys() if key[0] == func_name]
     for key in keys_to_delete:

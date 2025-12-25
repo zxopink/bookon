@@ -40,9 +40,10 @@ export default function SearchPage() {
       
       // Transform API response to BookCardProps format
       const books: BookCardProps[] = data.books?.map((book: any) => ({
+        external_id: book.external_id,
         title: book.title,
-        authors: book.author_name || [],
-        description: book.first_sentence?.[0] || '',
+        authors: book.authors || [],
+        description: book.first_sentence?.[0] || '', //fix this
         cover_i: book.cover_i?.toString()
       })) || [];
       const totalResults = data.total || 0;

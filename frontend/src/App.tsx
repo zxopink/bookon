@@ -5,6 +5,7 @@ import HomePage from './pages/HomePage';
 import PopularPage from './pages/PopularPage';
 import SearchPage from './pages/SearchPage';
 import ReadingListPage from './pages/ReadingListPage';
+import BookPage from './pages/BookPage';
 import { ReadingListProvider } from './contexts/ReadingListContext';
 import './App.css';
 
@@ -18,6 +19,7 @@ function App() {
             <Route path="popular" element={<PopularPage />} />
             <Route path="search" element={<SearchPage />} />
             <Route path="reading-list" element={<ReadingListPage />} />
+            <Route path="book/:id" element={<BookPage />} />
           </Route>
         </Routes>
         <ToastContainer
